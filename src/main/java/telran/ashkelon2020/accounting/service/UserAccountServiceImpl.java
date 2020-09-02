@@ -61,9 +61,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 		if (repository.existsById(userRegisterDto.getLogin())) {
 			throw new UserExistsException(userRegisterDto.getLogin());
 		}
-		//FIXME bcrypt
-		String hashPassword = userRegisterDto.getPassword();
-		//String hashPassword = BCrypt.hashpw(userRegisterDto.getPassword(), BCrypt.gensalt());
+		String hashPassword = passwordEncoder.encode(userRegisterDto.getPassword());
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
 		userAccount.setExpDate(LocalDateTime.now().plusDays(period));
 		userAccount.addRole(defaultUser.toUpperCase());
@@ -118,9 +116,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public void changePassword(String login, String password) {
 		UserAccount userAccount = repository.findById(login).orElseThrow(() -> new UserNotFoundException(login));
-		//FIXME bcrypt
-		String hashPassword = password;
-		//String hashPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+		String hashPassword = passwordEncoder.encode(password);
 		userAccount.setPassword(hashPassword);
 		userAccount.setExpDate(LocalDateTime.now().plusDays(period));
 		repository.save(userAccount);

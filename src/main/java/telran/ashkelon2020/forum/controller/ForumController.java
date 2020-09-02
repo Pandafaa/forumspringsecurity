@@ -1,5 +1,6 @@
 package telran.ashkelon2020.forum.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ public class ForumController {
 	}
 
 	@GetMapping("/post/{id}")
-	public PostDto getPost(@PathVariable String id) {
+	public PostDto getPost(@PathVariable String id, Principal principal) {
+		System.out.println(principal.getName());
 		return service.getPost(id);
 	}
 
