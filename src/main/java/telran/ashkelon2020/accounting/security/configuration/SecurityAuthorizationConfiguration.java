@@ -24,10 +24,18 @@ public class SecurityAuthorizationConfiguration extends WebSecurityConfigurerAda
 		http.authorizeRequests()
 			.antMatchers(HttpMethod.GET).permitAll()
 			.antMatchers(HttpMethod.POST, "/forum/posts/**").permitAll()
-			.antMatchers("/account/user/{login}/role/{role}**").hasRole("ADMINISTRATOR")
-			.antMatchers("/account/login**", "/forum/post/{id}/like**").hasAnyRole("ADMINISTRATOR", "MODERATOR", "USER")
-			//.antMatchers(HttpMethod.DELETE, "/account/user/{login}**").
-			.anyRequest().authenticated();
+			.antMatchers("/account/user/{login}/role/{role}**")
+				.hasRole("ADMINISTRATOR")
+			.antMatchers("/account/login**", "/forum/post/{id}/like**")
+				.hasAnyRole("ADMINISTRATOR", "MODERATOR", "USER")
+			.antMatchers("/account/user/{login}**")
+				.access("#login==authentication.name")
+			.antMatchers(HttpMethod.PUT,"/forum/post/{id}**")
+				.access("@customSecurity.checkPostAuthority(#id, authentication.name) or hasRole('MODERATOR')")
+			.antMatchers("/account/password**")
+				.authenticated()
+			.anyRequest()
+				.authenticated();
 		
 	}
 
