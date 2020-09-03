@@ -1,8 +1,8 @@
 package telran.ashkelon2020.accounting.controller;
 
-import java.security.Principal;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +16,7 @@ import telran.ashkelon2020.accounting.dto.RolesResponseDto;
 import telran.ashkelon2020.accounting.dto.UserAccountResponseDto;
 import telran.ashkelon2020.accounting.dto.UserRegisterDto;
 import telran.ashkelon2020.accounting.dto.UserUpdateDto;
+import telran.ashkelon2020.accounting.dto.exceptions.ForbiddenException;
 import telran.ashkelon2020.accounting.service.UserAccountService;
 
 @RestController
@@ -31,16 +32,18 @@ public class UserAccountController {
 	}
 
 	@PostMapping("/login")
-	public UserAccountResponseDto login(Principal principal) {
-		return accountService.getUser(principal.getName());
+	public UserAccountResponseDto login(Authentication authentication) {
+		return accountService.getUser(authentication.getName());
 	}
 
 	@PutMapping("/user/{login}")
+	@PreAuthorize("#login==authentication.name")
 	public UserAccountResponseDto updateUser(@PathVariable String login, @RequestBody UserUpdateDto userUpdateDto) {
 		return accountService.editUser(login, userUpdateDto);
 	}
 
 	@DeleteMapping("/user/{login}")
+	@PreAuthorize("#login==authentication.name")
 	public UserAccountResponseDto removeUser(@PathVariable String login) {
 		return accountService.removeUser(login);
 	}
@@ -56,8 +59,8 @@ public class UserAccountController {
 	}
 
 	@PutMapping("/password")
-	public void changePassword(@RequestHeader("X-Password") String newPassword, Principal principal) {
-		accountService.changePassword(principal.getName(), newPassword);
+	public void changePassword(@RequestHeader("X-Password") String newPassword, Authentication authentication) {
+		accountService.changePassword(authentication.getName(), newPassword);
 	}
 
 
