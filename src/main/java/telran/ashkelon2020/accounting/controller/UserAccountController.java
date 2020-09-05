@@ -37,13 +37,11 @@ public class UserAccountController {
 	}
 
 	@PutMapping("/user/{login}")
-	@PreAuthorize("#login==authentication.name")
 	public UserAccountResponseDto updateUser(@PathVariable String login, @RequestBody UserUpdateDto userUpdateDto) {
 		return accountService.editUser(login, userUpdateDto);
 	}
 
 	@DeleteMapping("/user/{login}")
-	@PreAuthorize("#login==authentication.name")
 	public UserAccountResponseDto removeUser(@PathVariable String login) {
 		return accountService.removeUser(login);
 	}
