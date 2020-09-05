@@ -27,7 +27,7 @@ public class ForumController {
 	ForumService service;
 
 	@PostMapping("/post/{author}")
-	@PreAuthorize("#author==authentication.name")
+//	@PreAuthorize("#author==authentication.name")
 	public PostDto addPost(@RequestBody NewPostDto newPost, @PathVariable String author) {
 		return service.addNewPost(newPost, author);
 	}
